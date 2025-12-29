@@ -34,3 +34,14 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# claude
+.claude/
+
+# playwright screenshots
+.playwright-mcp/
+
+# large/unused assets
+public/assets/projects/the web/
+public/assets/projects/resonantia/
+public/assets/projects/le reseau/milcondos-2.glb
