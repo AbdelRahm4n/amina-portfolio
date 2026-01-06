@@ -6,28 +6,8 @@ import { SITE_CONFIG } from "@/src/lib/config";
 const mangoGrotesque = localFont({
   src: [
     {
-      path: "../public/fonts/MangoGrotesque-Light.woff2",
-      weight: "300",
-      style: "normal",
-    },
-    {
       path: "../public/fonts/MangoGrotesque-Regular.woff2",
       weight: "400",
-      style: "normal",
-    },
-    {
-      path: "../public/fonts/MangoGrotesque-Medium.woff2",
-      weight: "500",
-      style: "normal",
-    },
-    {
-      path: "../public/fonts/MangoGrotesque-Bold.woff2",
-      weight: "700",
-      style: "normal",
-    },
-    {
-      path: "../public/fonts/MangoGrotesque-Black.woff2",
-      weight: "900",
       style: "normal",
     },
   ],
@@ -36,21 +16,6 @@ const mangoGrotesque = localFont({
 
 const clashDisplay = localFont({
   src: [
-    {
-      path: "../public/fonts/ClashDisplay-Light.woff2",
-      weight: "300",
-      style: "normal",
-    },
-    {
-      path: "../public/fonts/ClashDisplay-Regular.woff2",
-      weight: "400",
-      style: "normal",
-    },
-    {
-      path: "../public/fonts/ClashDisplay-Medium.woff2",
-      weight: "500",
-      style: "normal",
-    },
     {
       path: "../public/fonts/ClashDisplay-Semibold.woff2",
       weight: "600",

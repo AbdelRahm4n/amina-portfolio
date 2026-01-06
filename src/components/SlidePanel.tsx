@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ABOUT_CONTENT, CONTACT_CONTENT } from "@/src/lib/config";
 import CloseButton from "./CloseButton";
@@ -12,8 +12,13 @@ interface SlidePanelProps {
   onClose: () => void;
 }
 
+// Replace with your Formspree form ID from https://formspree.io
+const FORMSPREE_ID = "mpqwgqqr";
+
 export default function SlidePanel({ activePanel, onClose }: SlidePanelProps) {
   const content = activePanel === "about" ? ABOUT_CONTENT : CONTACT_CONTENT;
+  const [formState, setFormState] = useState<"idle" | "submitting" | "success" | "error">("idle");
+  const [formData, setFormData] = useState({ name: "", email: "", message: "" });
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -24,6 +29,40 @@ export default function SlidePanel({ activePanel, onClose }: SlidePanelProps) {
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [activePanel, onClose]);
+
+  // Reset form when panel closes
+  useEffect(() => {
+    if (!activePanel) {
+      setFormState("idle");
+      setFormData({ name: "", email: "", message: "" });
+    }
+  }, [activePanel]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setFormState("submitting");
+
+    try {
+      const response = await fetch(`https://formspree.io/f/${FORMSPREE_ID}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: formData.name,
+          email: formData.email,
+          message: formData.message,
+        }),
+      });
+
+      if (response.ok) {
+        setFormState("success");
+        setFormData({ name: "", email: "", message: "" });
+      } else {
+        setFormState("error");
+      }
+    } catch {
+      setFormState("error");
+    }
+  };
 
   return (
     <AnimatePresence>
@@ -43,17 +82,23 @@ export default function SlidePanel({ activePanel, onClose }: SlidePanelProps) {
             animate={{ x: 0 }}
             exit={{ x: "100%" }}
             transition={{ type: "spring", damping: 30, stiffness: 300 }}
-            className="fixed right-0 top-0 h-full w-full md:w-[480px] px-12 py-16 z-50 flex flex-col justify-center bg-cream"
+            className="fixed right-0 top-0 h-full w-full md:w-[520px] px-8 md:px-12 py-16 z-50 flex flex-col justify-center bg-cream overflow-y-auto"
           >
             <CloseButton onClick={onClose} className="absolute top-8 right-8" />
 
-            <div className="text-charcoal">
-              <h2 className="font-clash text-3xl font-semibold mb-8">{content.title}</h2>
+            <div className="text-charcoal max-w-md">
+              <h2 className="font-clash text-4xl md:text-5xl font-semibold mb-12">
+                {content.title}
+              </h2>
 
               {activePanel === "about" && (
-                <div className="space-y-5">
+                <div className="space-y-10">
                   {ABOUT_CONTENT.paragraphs.map((paragraph, index) => (
-                    <p key={index} className="text-lg leading-relaxed">
+                    <p
+                      key={index}
+                      className="text-lg md:text-xl leading-[2] font-light"
+                      style={{ fontFamily: "system-ui, -apple-system, sans-serif" }}
+                    >
                       {paragraph}
                     </p>
                   ))}
@@ -61,36 +106,101 @@ export default function SlidePanel({ activePanel, onClose }: SlidePanelProps) {
               )}
 
               {activePanel === "contact" && (
-                <div className="space-y-6">
-                  <div>
-                    <p className="text-sm mb-1 opacity-50">Email</p>
-                    <a
-                      href={`mailto:${CONTACT_CONTENT.email}`}
-                      className="text-lg hover:opacity-60 transition-opacity"
+                <div className="space-y-8">
+                  {formState === "success" ? (
+                    <motion.div
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className="text-center py-12"
                     >
-                      {CONTACT_CONTENT.email}
-                    </a>
-                  </div>
-
-                  <div>
-                    <p className="text-sm mb-1 opacity-50">Location</p>
-                    <p className="text-lg">{CONTACT_CONTENT.location}</p>
-                  </div>
-
-                  <div>
-                    <p className="text-sm mb-1 opacity-50">Social</p>
-                    <div className="flex gap-4">
-                      {CONTACT_CONTENT.social.map((link) => (
-                        <a
-                          key={link.label}
-                          href={link.url}
-                          className="text-lg hover:opacity-60 transition-opacity"
+                      <p className="text-2xl font-clash font-semibold mb-2">
+                        Message sent!
+                      </p>
+                      <p className="text-charcoal/60">
+                        Thank you for reaching out. I'll get back to you soon.
+                      </p>
+                    </motion.div>
+                  ) : (
+                    <form onSubmit={handleSubmit} className="space-y-6">
+                      <div>
+                        <label
+                          htmlFor="name"
+                          className="block text-sm mb-2 opacity-60"
                         >
-                          {link.label}
-                        </a>
-                      ))}
-                    </div>
-                  </div>
+                          Name
+                        </label>
+                        <input
+                          type="text"
+                          id="name"
+                          name="name"
+                          required
+                          value={formData.name}
+                          onChange={(e) =>
+                            setFormData({ ...formData, name: e.target.value })
+                          }
+                          className="w-full px-4 py-3 bg-transparent border border-charcoal/20 rounded-lg focus:outline-none focus:border-charcoal transition-colors"
+                          placeholder="Your name"
+                        />
+                      </div>
+
+                      <div>
+                        <label
+                          htmlFor="email"
+                          className="block text-sm mb-2 opacity-60"
+                        >
+                          Email
+                        </label>
+                        <input
+                          type="email"
+                          id="email"
+                          name="email"
+                          required
+                          value={formData.email}
+                          onChange={(e) =>
+                            setFormData({ ...formData, email: e.target.value })
+                          }
+                          className="w-full px-4 py-3 bg-transparent border border-charcoal/20 rounded-lg focus:outline-none focus:border-charcoal transition-colors"
+                          placeholder="your@email.com"
+                        />
+                      </div>
+
+                      <div>
+                        <label
+                          htmlFor="message"
+                          className="block text-sm mb-2 opacity-60"
+                        >
+                          Message
+                        </label>
+                        <textarea
+                          id="message"
+                          name="message"
+                          required
+                          rows={5}
+                          value={formData.message}
+                          onChange={(e) =>
+                            setFormData({ ...formData, message: e.target.value })
+                          }
+                          className="w-full px-4 py-3 bg-transparent border border-charcoal/20 rounded-lg focus:outline-none focus:border-charcoal transition-colors resize-none"
+                          placeholder="Tell me about your project..."
+                        />
+                      </div>
+
+                      {formState === "error" && (
+                        <p className="text-red-600 text-sm">
+                          Something went wrong. Please try again or email directly.
+                        </p>
+                      )}
+
+                      <button
+                        type="submit"
+                        disabled={formState === "submitting"}
+                        className="w-full py-4 bg-charcoal text-cream font-clash font-semibold rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        {formState === "submitting" ? "Sending..." : "Send Message"}
+                      </button>
+                    </form>
+                  )}
+
                 </div>
               )}
             </div>
