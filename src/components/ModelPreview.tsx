@@ -72,6 +72,7 @@ function CameraController({ interactive, controlsRef }: { interactive: boolean; 
       wasInteractive.current = interactive;
       return;
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Handle mode changes (only animate when CLOSING, not when opening)
