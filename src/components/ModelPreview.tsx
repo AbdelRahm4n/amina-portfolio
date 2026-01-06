@@ -9,7 +9,7 @@ import { OrbitControls as OrbitControlsImpl } from "three-stdlib";
 // SE isometric camera position (no model rotation needed)
 // Camera positioned at SE angle looking at center
 const INITIAL_CAMERA_POSITION: [number, number, number] = [5, 4, 5];
-const PREVIEW_ZOOM = 65;
+const PREVIEW_ZOOM = 55;
 const INTERACTIVE_ZOOM = 85;
 
 interface GLBModelProps {
@@ -57,13 +57,13 @@ function GLBModel({ modelSrc }: GLBModelProps) {
   );
 }
 
-function CameraController({ interactive, controlsRef }: { interactive: boolean; controlsRef: React.RefObject<OrbitControlsImpl | null> }) {
+function CameraController({ interactive, controlsRef, modelScale = 1 }: { interactive: boolean; controlsRef: React.RefObject<OrbitControlsImpl | null>; modelScale?: number }) {
   const { camera, size } = useThree();
   const hasMounted = useRef(false);
   const wasInteractive = useRef(interactive);
   const isAnimating = useRef(false);
   const targetPosition = useRef(new THREE.Vector3(...INITIAL_CAMERA_POSITION));
-  const targetZoom = useRef(PREVIEW_ZOOM);
+  const targetZoom = useRef(PREVIEW_ZOOM * modelScale);
 
   // Set initial state on mount (no animation)
   useEffect(() => {
@@ -84,7 +84,7 @@ function CameraController({ interactive, controlsRef }: { interactive: boolean; 
       if (wasInteractive.current && !interactive) {
         isAnimating.current = true;
         targetPosition.current.set(...INITIAL_CAMERA_POSITION);
-        targetZoom.current = PREVIEW_ZOOM;
+        targetZoom.current = PREVIEW_ZOOM * modelScale;
 
         // Disable OrbitControls during animation
         if (controlsRef.current) {
@@ -93,7 +93,7 @@ function CameraController({ interactive, controlsRef }: { interactive: boolean; 
       }
       wasInteractive.current = interactive;
     }
-  }, [interactive, controlsRef]);
+  }, [interactive, controlsRef, modelScale]);
 
   // Update camera on resize
   useEffect(() => {
@@ -143,16 +143,18 @@ interface SceneProps {
   modelSrc: string;
   interactive: boolean;
   controlsRef: React.RefObject<OrbitControlsImpl | null>;
+  modelScale?: number;
 }
 
-function Scene({ modelSrc, interactive, controlsRef }: SceneProps) {
+function Scene({ modelSrc, interactive, controlsRef, modelScale = 1 }: SceneProps) {
   return (
     <>
-      <CameraController interactive={interactive} controlsRef={controlsRef} />
+      <CameraController interactive={interactive} controlsRef={controlsRef} modelScale={modelScale} />
 
-      {/* Simplified lighting - 2 lights instead of 4 */}
-      <ambientLight intensity={1.8} />
-      <directionalLight position={[10, 10, 5]} intensity={1.2} />
+      {/* Brighter lighting */}
+      <ambientLight intensity={5} />
+      <directionalLight position={[5, 5, 5]} intensity={3} />
+      <directionalLight position={[-5, 5, -5]} intensity={2} />
 
       <Suspense fallback={null}>
         <GLBModel modelSrc={modelSrc} />
@@ -180,6 +182,7 @@ interface ModelPreviewProps {
   modelSrc?: string;
   className?: string;
   interactive?: boolean;
+  modelScale?: number;
 }
 
 // Component to trigger initial render then stop
@@ -200,7 +203,8 @@ function InitialRender({ onRendered }: { onRendered: () => void }) {
 export default function ModelPreview({
   modelSrc,
   className = "",
-  interactive = false
+  interactive = false,
+  modelScale = 1
 }: ModelPreviewProps) {
   const controlsRef = useRef<OrbitControlsImpl | null>(null);
   const [hasInitialRender, setHasInitialRender] = useState(false);
@@ -245,11 +249,11 @@ export default function ModelPreview({
         }}
         dpr={interactive ? [1, 2] : 1} // Lower DPR for previews
         frameloop={frameloop}
-        flat={!interactive} // Disable tone mapping for previews (faster)
+        flat // Disable tone mapping to preserve original model colors
         orthographic
         camera={{
           position: INITIAL_CAMERA_POSITION,
-          zoom: PREVIEW_ZOOM,
+          zoom: PREVIEW_ZOOM * modelScale,
           near: 0.1,
           far: 100
         }}
@@ -262,6 +266,7 @@ export default function ModelPreview({
           modelSrc={modelSrc}
           interactive={interactive}
           controlsRef={controlsRef}
+          modelScale={modelScale}
         />
         <Preload all />
       </Canvas>

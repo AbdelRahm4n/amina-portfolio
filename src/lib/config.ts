@@ -21,7 +21,7 @@ export type ProjectView =
   | { type: "text"; content: string }
   | { type: "gallery"; comingSoon?: boolean };
 
-export type ProjectId = "agora" | "duplex" | "milcondos";
+export type ProjectId = "agora" | "duplex" | "milcondos" | "web";
 
 export interface Project {
   id: ProjectId;
@@ -36,6 +36,8 @@ export interface Project {
     right?: string;
     translateY: string;
   };
+  // Optional model scale multiplier (default 1)
+  modelScale?: number;
 }
 
 export const PROJECTS: Project[] = [
@@ -73,13 +75,29 @@ export const PROJECTS: Project[] = [
     id: "milcondos",
     name: "Mil Condos",
     modelSrc: "/assets/projects/le reseau/reseau-optimized.glb",
-    subtitle: ["ARC2011", "Autumn 2023", "9 weeks", "Teammate : Audrey Lefebvre", "Tutor : Sébastien St-Laurent"],
+    subtitle: ["ARC2011", "Autumn 2023", "9 weeks", "Tutor : Sébastien St-Laurent"],
     position: { top: "35%", left: "35%", translateY: "-50%" },
     views: [
       { type: "model" },
       {
         type: "text",
         content: "This project focuses on urban collective housing in the Nouvel Outremont area of Montreal, bordering the MIL Campus. It aims to design a mixed-use residential complex with at least 40 units, incorporating shared spaces, community services, and retail.\n\nThe design must blend with the site's evolving urban fabric, considering density, accessibility, and integration of public and private spaces. Emphasis is placed on sustainable design, universal accessibility, and urban regeneration, while respecting local building regulations and environmental context.\n\nOur primary goal was to optimize the user experience by maximizing sunlight and offering expansive views. To achieve this, we divided the building into five distinct blocks, interconnected by a network of corridors, ensuring each unit benefits from at least three unobstructed walls with views.\n\nThe three larger blocks along Thérèse Lavoie Roux Street create a cohesive façade that blends seamlessly with the new, gentrified area, while the three smaller blocks along Rue du Manoir reflect the classic townhouse style of Outremont, hence the choice of a brick finish.\n\nOn a more intimate scale, we applied this concept of fragmentation within the units by introducing tinted grey \"glass corners,\" enhancing the sense of luxury. The design accommodates a variety of living spaces, including two-story townhouses on the ground floor, as well as one-floor apartments and penthouses spread throughout the building."
+      },
+      { type: "gallery", comingSoon: true }
+    ]
+  },
+  {
+    id: "web",
+    name: "The Web",
+    modelSrc: "/assets/projects/web/web.glb",
+    subtitle: ["ARC3018 - Winter 2025", "12 weeks", "Teammates : Tokiane Leduc-Nguyen & Sara Goulet", "Tutor : Ana Medina"],
+    position: { top: "75%", left: "40%", translateY: "-50%" },
+    modelScale: 2,
+    views: [
+      { type: "model" },
+      {
+        type: "text",
+        content: "A community is a group of people all connected to each other by social ties. These ties can be shared values, public spaces, proximity or common interest among others and creates a sense of belonging. Back in the Olympic Games in 1976, the village was a place of dynamic interactions between athletes from different countries. Nowadays, the Olympic Village seems empty and lacks the strong social exchanges it once had.\n\nThe Web's purpose is to bring back this vitality and sense of community that was felt during the Olympic Games in 1976. Thus, several clusters of communal spaces were placed to encourage residents to meet in different places in the building.\n\nThese clusters of social spaces are intersections that create opportunities for repetitive social interactions and the repetitiveness of these spaces allows people to build lasting connections. This social tension builds the foundation of The Web revitalize the Olympic Village."
       },
       { type: "gallery", comingSoon: true }
     ]

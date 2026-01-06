@@ -96,7 +96,7 @@ export default function SlidePanel({ activePanel, onClose }: SlidePanelProps) {
                   {ABOUT_CONTENT.paragraphs.map((paragraph, index) => (
                     <p
                       key={index}
-                      className="text-lg md:text-xl leading-[2] font-light"
+                      className="text-sm md:text-base leading-[2] font-light"
                       style={{ fontFamily: "system-ui, -apple-system, sans-serif" }}
                     >
                       {paragraph}
@@ -125,7 +125,7 @@ export default function SlidePanel({ activePanel, onClose }: SlidePanelProps) {
                       <div>
                         <label
                           htmlFor="name"
-                          className="block text-sm mb-2 opacity-60"
+                          className="block text-sm mb-2 opacity-60 font-clash"
                         >
                           Name
                         </label>
@@ -138,15 +138,14 @@ export default function SlidePanel({ activePanel, onClose }: SlidePanelProps) {
                           onChange={(e) =>
                             setFormData({ ...formData, name: e.target.value })
                           }
-                          className="w-full px-4 py-3 bg-transparent border border-charcoal/20 rounded-lg focus:outline-none focus:border-charcoal transition-colors"
-                          placeholder="Your name"
+                          className="w-full px-4 py-3 bg-transparent border border-charcoal/20 rounded-lg focus:outline-none focus:border-charcoal transition-colors font-clash"
                         />
                       </div>
 
                       <div>
                         <label
                           htmlFor="email"
-                          className="block text-sm mb-2 opacity-60"
+                          className="block text-sm mb-2 opacity-60 font-clash"
                         >
                           Email
                         </label>
@@ -159,15 +158,14 @@ export default function SlidePanel({ activePanel, onClose }: SlidePanelProps) {
                           onChange={(e) =>
                             setFormData({ ...formData, email: e.target.value })
                           }
-                          className="w-full px-4 py-3 bg-transparent border border-charcoal/20 rounded-lg focus:outline-none focus:border-charcoal transition-colors"
-                          placeholder="your@email.com"
+                          className="w-full px-4 py-3 bg-transparent border border-charcoal/20 rounded-lg focus:outline-none focus:border-charcoal transition-colors font-clash"
                         />
                       </div>
 
                       <div>
                         <label
                           htmlFor="message"
-                          className="block text-sm mb-2 opacity-60"
+                          className="block text-sm mb-2 opacity-60 font-clash"
                         >
                           Message
                         </label>
@@ -180,8 +178,7 @@ export default function SlidePanel({ activePanel, onClose }: SlidePanelProps) {
                           onChange={(e) =>
                             setFormData({ ...formData, message: e.target.value })
                           }
-                          className="w-full px-4 py-3 bg-transparent border border-charcoal/20 rounded-lg focus:outline-none focus:border-charcoal transition-colors resize-none"
-                          placeholder="Tell me about your project..."
+                          className="w-full px-4 py-3 bg-transparent border border-charcoal/20 rounded-lg focus:outline-none focus:border-charcoal transition-colors resize-none font-clash"
                         />
                       </div>
 

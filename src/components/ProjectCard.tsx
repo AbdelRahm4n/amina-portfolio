@@ -64,24 +64,46 @@ function ProjectCard({
 
   const variants = {
     preview: isMobile ? mobilePreviewPosition : desktopPreviewPosition,
-    focused: {
-      top: "50%",
-      left: "50%",
-      right: "auto",
-      x: "-50%",
-      y: "-50%",
-      scale: 1.5,
-      opacity: 1,
-    },
-    focusedHidden: {
-      top: "50%",
-      left: "50%",
-      right: "auto",
-      x: "-50%",
-      y: "-50%",
-      scale: 1.5,
-      opacity: 0,
-    },
+    focused: isMobile
+      ? {
+          position: "fixed" as const,
+          top: "45%",
+          left: "50%",
+          right: "auto",
+          x: "-50%",
+          y: "-50%",
+          scale: 1,
+          opacity: 1,
+        }
+      : {
+          top: "50%",
+          left: "50%",
+          right: "auto",
+          x: "-50%",
+          y: "-50%",
+          scale: 3,
+          opacity: 1,
+        },
+    focusedHidden: isMobile
+      ? {
+          position: "fixed" as const,
+          top: "45%",
+          left: "50%",
+          right: "auto",
+          x: "-50%",
+          y: "-50%",
+          scale: 1,
+          opacity: 0,
+        }
+      : {
+          top: "50%",
+          left: "50%",
+          right: "auto",
+          x: "-50%",
+          y: "-50%",
+          scale: 3,
+          opacity: 0,
+        },
     hidden: {
       opacity: 0,
       scale: 0.9,
@@ -94,17 +116,10 @@ function ProjectCard({
       animate={animateState}
       variants={variants}
       transition={{ duration: 0.6, ease: [0.4, 0, 0.2, 1] }}
-      style={
-        !isMobile
-          ? {
-              width: "clamp(200px, 30vw, 350px)",
-              height: "clamp(200px, 30vw, 350px)",
-            }
-          : {
-              width: "min(280px, 70vw)",
-              height: "min(280px, 70vw)",
-            }
-      }
+      style={{
+        width: !isMobile ? "350px" : "280px",
+        height: !isMobile ? "350px" : "280px",
+      }}
       onClick={!isAnyFocused ? onClick : undefined}
       role={!isAnyFocused ? "button" : undefined}
       tabIndex={!isAnyFocused ? 0 : -1}
@@ -122,9 +137,9 @@ function ProjectCard({
       }`}
     >
       <div
-        className={`w-full h-full transition-all duration-300 grayscale ${
-          !isAnyFocused ? "hover:invert" : ""
-        }`}
+        className={`w-full h-full transition-all duration-300 ${
+          !isFocused ? "grayscale" : ""
+        } ${!isAnyFocused ? "hover:invert" : ""}`}
       >
         <Suspense
           fallback={
@@ -136,6 +151,7 @@ function ProjectCard({
           <ModelPreview
             modelSrc={project.modelSrc}
             interactive={isFocused}
+            modelScale={project.modelScale}
           />
         </Suspense>
       </div>
